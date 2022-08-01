@@ -17,6 +17,8 @@ config = {
   'databaseURL':'https://cs-group-f-maya-default-rtdb.europe-west1.firebasedatabase.app/'
 }
 
+
+
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 db=firebase.database()
@@ -63,13 +65,16 @@ def signin():
 
 @app.route('/add_tweet', methods=['GET', 'POST'])
 def add_tweet():
+  #name = login_session['name']
   if request.method=='POST':
     try:
       title = request.form['title']
       tweet = request.form['tweet']
-      tweets = {'title':title,'tweet':tweet}
-      db.child('tweets').push(tweet)
-      return redirect(url_for('add_tweet'))
+      uid = login_session['user']['localId']
+      name = login_session['name']
+      tweets = {"title":title,"tweet":tweet,"uid":uid}
+      db.child('tweets').push(tweets)
+      return redirect(url_for('all_tweets'))
 
     except:
       raise
@@ -77,6 +82,19 @@ def add_tweet():
 
   else:
     return render_template("add_tweet.html")
+
+
+@app.route('/all_tweets', methods=['GET','POST'])
+def all_tweets():
+  if request.method=='POST':
+    try:
+      redirect(url_for('add_tweet'))
+
+    except:
+      error = "coldn't open tweets"
+
+  else:
+    return render_template('tweets.html')
 
 
 if __name__ == '__main__':
