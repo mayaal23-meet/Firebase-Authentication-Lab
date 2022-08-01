@@ -5,6 +5,26 @@
     <title>Title</title>
 </head>
 <body>
-    Great Job!
+    <form method="POST" action="/add_tweet">
+    	<div>
+    		<h2>hello {{name}}</h2>
+    		<p>tweet your opinion here</p>
+    	<div>
+    		<label>title of the tweet here*</label>
+            	<div>
+                	<input type="title"  name="title" maxlength="280">
+           		</div>
+        </div>
+        <div>
+    		<label>tweet here*</label>
+            	<div>
+                	<input type="tweet"  name="tweet" maxlength="280">
+           		</div>
+        </div>
+        <br>
+        <div>
+            <input type="submit" />
+        </div>
+    </form>
 </body>
 </html>

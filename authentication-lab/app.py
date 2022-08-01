@@ -18,16 +18,24 @@ config = {
 }
 
 firebase = pyrebase.initialize_app(config)
-auth = firebase.auth
+auth = firebase.auth()
+db=firebase.database()
 
 @app.route('/', methods=['GET', 'POST'])
 def signup():
   error = ""
   if request.method == 'POST':
+      name = request.form['name']
+      username = request.form['username']
       email = request.form['email']
       password = request.form['password']
+      bio = request.form['bio']
+
       try:
         login_session['user'] = auth.create_user_with_email_and_password(email, password)
+
+        user= {'name':name,'username':username,'email':email,'password':password,'bio':bio}
+        db.child('Users').child(login_session['user']['localId']).set(user)
         return redirect(url_for('signin'))
       except:
         error = "Authentication failed"
@@ -43,7 +51,7 @@ def signin():
       email = request.form['email']
       password = request.form['password']
       try:
-          login_session['user'] = auth.sigh_in_with_email_and_password(email, password)
+          login_session['user'] = auth.sign_in_with_email_and_password(email, password)
           return redirect(url_for('add_tweet'))
       except:
           error = "Authentication failed"
@@ -55,6 +63,19 @@ def signin():
 
 @app.route('/add_tweet', methods=['GET', 'POST'])
 def add_tweet():
+  if request.method=='POST':
+    try:
+      title = request.form['title']
+      tweet = request.form['tweet']
+      tweets = {'title':title,'tweet':tweet}
+      db.child('tweets').push(tweet)
+      return redirect(url_for('add_tweet'))
+
+    except:
+      raise
+      error = "couldn't post tweet"
+
+  else:
     return render_template("add_tweet.html")
 
 
