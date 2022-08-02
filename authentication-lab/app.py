@@ -71,7 +71,6 @@ def add_tweet():
       title = request.form['title']
       tweet = request.form['tweet']
       uid = login_session['user']['localId']
-      name = login_session['name']
       tweets = {"title":title,"tweet":tweet,"uid":uid}
       db.child('tweets').push(tweets)
       return redirect(url_for('all_tweets'))
@@ -94,7 +93,8 @@ def all_tweets():
       error = "coldn't open tweets"
 
   else:
-    return render_template('tweets.html')
+    tweets=db.child('tweets').get().val()
+    return render_template('tweets.html',tweets=tweets)
 
 
 if __name__ == '__main__':
